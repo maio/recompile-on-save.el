@@ -60,15 +60,18 @@
 ;; This way source <-> compilation buffer association will happen
 ;; automatically when you run M-x compile.
 ;;
-;; To disable automatic recompilation run M-x stop-recompile-on-save
+;; To (temporarily) disable automatic recompilation turn off
+;; recompile-on-save-mode.
 ;;
+;; To reset compilation buffers associations for current source buffer
+;; use M-x reset-recompile-on-save
 
 ;;; Code:
 
 (require 'dash)
 
-(defvar recompile-on-save-list nil)
-(make-variable-buffer-local 'recompile-on-save-list)
+(defvar recompile-on-save-list nil
+  "Compilation buffers associated with current buffer.")
 
 (defun recompile-on-save (cbuf)
   (interactive
@@ -78,10 +81,10 @@
                              (remove-if-not (lambda (buffer) (with-current-buffer buffer (eql major-mode 'compilation-mode)))
                                             (buffer-list)))
                      (lambda (info) (cdr info)) t)))
-  (add-hook 'after-save-hook 'ros--recompile-on-save t t)
+  (recompile-on-save-mode t)
   (add-to-list 'recompile-on-save-list (get-buffer cbuf)))
 
-(defun stop-recompile-on-save ()
+(defun reset-recompile-on-save ()
   (interactive)
   (setq recompile-on-save-list nil))
 
@@ -97,6 +100,14 @@
 (defun ros--recompile-on-save ()
   (setq recompile-on-save-list (--filter (buffer-live-p it) recompile-on-save-list))
   (--each recompile-on-save-list (with-current-buffer it (recompile))))
+
+(define-minor-mode recompile-on-save-mode
+  "Trigger recompilation on file save."
+  :lighter " RoS"
+  (make-local-variable 'recompile-on-save-list)
+  (if recompile-on-save-mode
+      (add-hook 'after-save-hook 'ros--recompile-on-save t t)
+    (remove-hook 'after-save-hook 'ros--recompile-on-save t)))
 
 (provide 'recompile-on-save)
 

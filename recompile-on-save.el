@@ -78,6 +78,7 @@
                              (remove-if-not (lambda (buffer) (with-current-buffer buffer (eql major-mode 'compilation-mode)))
                                             (buffer-list)))
                      (lambda (info) (cdr info)) t)))
+  (add-hook 'after-save-hook 'ros--recompile-on-save t t)
   (add-to-list 'recompile-on-save-list (get-buffer cbuf)))
 
 (defun stop-recompile-on-save ()
@@ -96,8 +97,6 @@
 (defun ros--recompile-on-save ()
   (setq recompile-on-save-list (--filter (buffer-live-p it) recompile-on-save-list))
   (--each recompile-on-save-list (with-current-buffer it (recompile))))
-
-(add-hook 'after-save-hook 'ros--recompile-on-save)
 
 (provide 'recompile-on-save)
 

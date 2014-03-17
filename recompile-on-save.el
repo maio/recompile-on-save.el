@@ -5,7 +5,7 @@
 ;; Author: Marian Schubert <marian.schubert@gmail.com>
 ;; URL: https://github.com/maio/recompile-on-save.el
 ;; Created: 9 Mar 2014
-;; Version: 1.0
+;; Version: 1.1
 ;; Package-Requires: ((dash "1.1.0"))
 ;; Keywords: convenience files processes tools
 

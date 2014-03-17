@@ -73,6 +73,7 @@
 (defvar recompile-on-save-list nil
   "Compilation buffers associated with current buffer.")
 
+;;;###autoload
 (defun recompile-on-save (cbuf)
   (interactive
    (list
@@ -84,10 +85,12 @@
   (recompile-on-save-mode t)
   (add-to-list 'recompile-on-save-list (get-buffer cbuf)))
 
+;;;###autoload
 (defun reset-recompile-on-save ()
   (interactive)
   (setq recompile-on-save-list nil))
 
+;;;###autoload
 (defmacro recompile-on-save-advice (function)
   `(unless (ad-find-advice ',function 'around 'recompile-on-save)
      (defadvice ,function (around recompile-on-save activate)
@@ -101,6 +104,7 @@
   (setq recompile-on-save-list (--filter (buffer-live-p it) recompile-on-save-list))
   (--each recompile-on-save-list (with-current-buffer it (recompile))))
 
+;;;###autoload
 (define-minor-mode recompile-on-save-mode
   "Trigger recompilation on file save."
   :lighter " RoS"

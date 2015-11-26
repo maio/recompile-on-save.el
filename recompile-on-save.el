@@ -6,7 +6,7 @@
 ;; URL: https://github.com/maio/recompile-on-save.el
 ;; Created: 9 Mar 2014
 ;; Version: 1.1
-;; Package-Requires: ((dash "1.1.0"))
+;; Package-Requires: ((dash "1.1.0") (cl-lib "0.5"))
 ;; Keywords: convenience files processes tools
 
 ;; This file is not part of GNU Emacs.
@@ -69,6 +69,7 @@
 ;;; Code:
 
 (require 'dash)
+(require 'cl-lib)
 
 (defvar recompile-on-save-list nil
   "Compilation buffers associated with current buffer.")
@@ -79,7 +80,7 @@
    (list
     (completing-read "Compilation buffer: "
                      (mapcar (lambda (buffer) (cons (buffer-name buffer) buffer))
-                             (remove-if-not (lambda (buffer) (with-current-buffer buffer (eql major-mode 'compilation-mode)))
+                             (cl-remove-if-not (lambda (buffer) (with-current-buffer buffer (eql major-mode 'compilation-mode)))
                                             (buffer-list)))
                      (lambda (info) (cdr info)) t)))
   (recompile-on-save-mode t)
